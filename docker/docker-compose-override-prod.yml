@@ -1,0 +1,59 @@
+#
+# Docker compose override file to by used on top of docker-compose.yml to make
+# sure
+#  * all containers are restarted after a system reboot
+#  * the HTTP port is exposed at http://127.0.0.1:8001
+#  * all ENV files are mounted into the containers
+#   -> You need to make sure they exist, if in doubt copy the example ones
+#      and adjust later.
+#  * a scripts directory is mounted into netbok and netbox-worker containers
+#
+# This expects that the /srv/netbox exists and the ENV files reside there,
+# as well as /srv/netbox/scripts and /srv/netbox/media exist and the latter
+# is writeable by the container (user).
+#
+
+version: '3.4'
+services:
+  netbox:
+    restart: unless-stopped
+
+# Uncomment and set to desired version
+#    image: netboxcommunity/netbox:v3.4.7
+
+    # Add some more start-up time to run migrations
+    healthcheck:
+      start_period: 180s
+
+    env_file: /srv/netbox/env/netbox.env
+
+    volumes:
+    - /etc/ssl/certs/ffho-cacert.pem:/etc/ssl/certs/ffho-cacert.pem
+    - /etc/ssl/certs/...
+    - /srv/netbox/scripts/:/etc/netbox/scripts:z,ro
+    - /srv/netbox/media/:/opt/netbox/netbox/media:z,rw
+
+    ports:
+    - 127.0.0.1:8001:8080
+
+  netbox-worker:
+    restart: unless-stopped
+    env_file: /srv/netbox/env/netbox.env
+    volumes:
+    - /srv/netbox/scripts/:/etc/netbox/scripts:z,ro
+
+  netbox-housekeeping:
+    restart: unless-stopped
+    env_file: /srv/netbox/env/netbox.env
+
+  redis:
+    restart: unless-stopped
+    env_file: /srv/netbox/env/redis.env
+
+  redis-cache:
+    restart: unless-stopped
+    env_file: /srv/netbox/env/redis-cache.env
+
+  postgres:
+    restart: unless-stopped
+    env_file: /srv/netbox/env/postgres.env

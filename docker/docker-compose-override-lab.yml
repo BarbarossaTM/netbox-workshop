@@ -1,0 +1,29 @@
+#
+# Docker compose override file to by used on top of docker-compose.yml to make
+# sure
+#  * the HTTP port is exposed at http://127.0.0.1:8001
+#  * scripst directory is mounted into netbox and netbox-worker containers
+#
+# This expects that the /srv/netbox exists and /srv/netbox/scripts as well as
+# /srv/netbox/media exist and the latter is writeable by the container (user).
+#
+
+version: '3.4'
+services:
+  netbox:
+#    image: netboxcommunity/netbox:v3.4.7
+
+    # Add some more start-up time to run migrations
+    healthcheck:
+      start_period: 180s
+
+    volumes:
+    - /srv/netbox/scripts/:/etc/netbox/scripts:z,ro
+    - /srv/netbox/media/:/opt/netbox/netbox/media:z,rw
+
+    ports:
+    - 127.0.0.1:8001:8080
+
+  netbox-worker:
+    volumes:
+    - /srv/netbox/scripts/:/etc/netbox/scripts:z,ro
