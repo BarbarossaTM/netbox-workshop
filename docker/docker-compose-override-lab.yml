@@ -18,12 +18,12 @@ services:
       start_period: 180s
 
     volumes:
-    - /srv/netbox/scripts/:/etc/netbox/scripts:z,ro
-    - /srv/netbox/media/:/opt/netbox/netbox/media:z,rw
+    - ./scripts/:/etc/netbox/scripts:z,ro
+    - ./media/:/opt/netbox/netbox/media:z,rw
 
     ports:
     - 127.0.0.1:8001:8080
 
   netbox-worker:
     volumes:
-    - /srv/netbox/scripts/:/etc/netbox/scripts:z,ro
+    - ./scripts/:/etc/netbox/scripts:z,ro

@@ -3,18 +3,22 @@
 We're using [NetBox Docker](https://github.com/netbox-community/netbox-docker.git) to set up our lab env.
 See the repository for more details on how to tweak things.
 
-Set up NetBox docker and download images
+This directory contains some fluffy glue around netbox-docker to spawn a lab.
 
-    $ git clone https://github.com/netbox-community/netbox-docker.git
-    $ cd netbox-docker.git
-    $ docker compose -f docker-compose.yml pull     # Get images
+To set up NetBox docker and download images run
+
+    $ ./nblab.sh init
 
 Fire up the lab
 
-    $ docker compose -f docker-compose.yml -f docker-compose-override-lab.yml up
+    $ ./nblab.sh lab
 
 Create super user account
 
     $ docker exec -ti netbox-docker-netbox-1  /opt/netbox/netbox/manage.py createsuperuser
 
 Point your browser to http://localhost:8001 and log in
+
+You can shutdown the lab using
+
+    $ ./nblab.sh stop
